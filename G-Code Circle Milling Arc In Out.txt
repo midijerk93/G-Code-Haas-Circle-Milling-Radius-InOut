@@ -1,0 +1,116 @@
+using System;
+					
+public class Program
+{
+	public static void Main()
+	{
+		//Getting variables for circle milling
+		Console.WriteLine("What is dia. of your endmill?");
+		double endMill = double.Parse(Console.ReadLine());
+		Console.WriteLine("What is desired dia of circle?");
+		double desiredCircle = double.Parse(Console.ReadLine());
+		Console.WriteLine("What is starting X Location?");
+		double startingX = double.Parse(Console.ReadLine());
+		Console.WriteLine("What is starting Y location?");
+		double startingY = double.Parse(Console.ReadLine());
+		Console.WriteLine("What is desired depth?");
+		double depthDesired = double.Parse(Console.ReadLine());
+		Console.WriteLine("What is desired depth of cut?");
+		double depthCut = double.Parse(Console.ReadLine());
+		Console.WriteLine("What is desired retract height");
+		double retractHeight = double.Parse(Console.ReadLine());
+		Console.WriteLine("What is tool number used?");
+		double toolNum = double.Parse(Console.ReadLine());
+		Console.WriteLine("What is the last four numbers of part number");
+		double progNum = double.Parse(Console.ReadLine());
+		
+		
+		//Calculating RPM
+		double a = 300; //SFM
+		double b = 3.82;
+		double c = a * b;
+		double RPM = Math.Round(c / endMill, 0);
+		//Console.WriteLine("RPM will be " + RPM);
+		
+		//Calculating depth passes
+		double depthPasses = Math.Round(depthDesired / depthCut, 2);
+		//Console.WriteLine("This will take " + depthPasses + " depth passes");
+		
+		//Calculating 60% of endmill
+		double d = Math.Round(endMill * .60, 4);
+		//Console.WriteLine("Stepover is " + d);
+		
+		//Calculating I passes
+		double e = Math.Round(desiredCircle - endMill, 4); //calculates stock
+		double iPasses = Math.Round(e / d); //calculates passes
+		//Console.WriteLine("This will take " + iPasses + " I passes");
+		
+		//Starts printing program
+		Console.WriteLine("");
+		Console.WriteLine("%");
+		Console.WriteLine("O0" + progNum);
+		Console.WriteLine("T" + toolNum + " M06" + "(" + endMill + " Endmill);");
+		Console.WriteLine("G90 G43 G0 G54 X" + startingX.ToString("F4") + " Y" + startingY.ToString("F4") + " Z6." + " H" + toolNum + " S" + RPM + " M3;");
+		Console.WriteLine("G0 Z.1;");
+		Console.WriteLine("");
+		//Console.WriteLine("G1 Z-" + Math.Round(depthCut, 3) + ";");
+		
+		double currentCircle = startingX + d;
+		double maxCircle = Math.Round((startingX + desiredCircle - endMill), 4);
+		double maxI = e;
+		
+
+		double i, x, q, m; //i=amount of circle passes | x=current circle dia | q=current i | m=maxCircle
+		double maxZ = depthDesired;
+		double currentDepth = .05;
+		double currentR = d/2;
+		
+		//Iterates through width passes and write passes
+		for (double z=depthPasses, dd=depthDesired, cd=currentDepth, rr=currentR; z>0; z--)
+		{
+			
+			if (currentDepth > depthDesired)
+			{
+				currentDepth = depthDesired;
+			}
+			
+			Console.WriteLine("G1 Z-" + Math.Round(currentDepth, 4) + " F7.5;");
+			currentDepth+=depthCut;
+			
+			//Iterates through circle passes and writes lines
+			for (i=iPasses, x=currentCircle, q=d, m=maxCircle; i>0; i--)
+					{
+					
+						Console.WriteLine("G3 X" + Math.Round(x, 4).ToString("F4") + " Y" + startingY.ToString("F4") +  " I-" + Math.Round(q, 4) + " R" + Math.Round(rr, 4) + " F15.;");	
+						Console.WriteLine("I-" + Math.Round(q, 4) + ";");
+						Console.WriteLine("G3 X" + startingX.ToString("F4") + " Y" + startingY.ToString("F4") + " I-" + Math.Round(q,4) + " R" + Math.Round(rr, 4) + ";");
+						x+=d;
+						q = x - startingX;
+						rr = q / 2;
+					
+				
+						if (x > maxCircle)
+						{
+							x=maxCircle;
+						}
+				
+						if (q > maxI)
+						{
+							q = maxI;
+						}
+				
+					}
+			//Console.WriteLine("G3 X" + Math.Round(startingX, 4) + "I-" + Math.Round(q, 4) + " F15.;");
+		    Console.WriteLine("G0 Z" + retractHeight + ";");
+			Console.WriteLine(";");
+			Console.WriteLine("G1 X" + startingX.ToString("F4") + ";");
+							  
+		}
+		
+		Console.WriteLine("G0 Z6.;");
+		Console.WriteLine("G59 X0. Y0.;");
+		Console.WriteLine("M30");
+		Console.WriteLine("%");
+						
+	}
+}
