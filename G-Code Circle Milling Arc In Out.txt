@@ -23,6 +23,8 @@ public class Program
 		double toolNum = double.Parse(Console.ReadLine());
 		Console.WriteLine("What is the last four numbers of part number");
 		double progNum = double.Parse(Console.ReadLine());
+		Console.WriteLine("What is starting hole dia.?");
+		double startDia = double.Parse(Console.ReadLine());
 		
 		
 		//Calculating RPM
@@ -50,6 +52,7 @@ public class Program
 		Console.WriteLine("%");
 		Console.WriteLine("O0" + progNum);
 		Console.WriteLine("T" + toolNum + " M06" + "(" + endMill + " Endmill);");
+		Console.WriteLine("(" + desiredCircle + " Diameter Circle Mill);");
 		Console.WriteLine("G90 G43 G0 G54 X" + startingX.ToString("F4") + " Y" + startingY.ToString("F4") + " Z6." + " H" + toolNum + " S" + RPM + " M3;");
 		Console.WriteLine("G0 Z.1;");
 		Console.WriteLine("");
