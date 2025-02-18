@@ -43,9 +43,10 @@ public class Program
 		//Console.WriteLine("Stepover is " + d);
 		
 		//Calculating I passes
-		double e = Math.Round(desiredCircle - endMill, 4); //calculates stock
-		double iPasses = Math.Round(e / d); //calculates passes
-		//Console.WriteLine("This will take " + iPasses + " I passes");
+		double ee = Math. Round(desiredCircle - endMill, 4); 
+		double e = Math.Round(ee / 2, 4); //calculates stock
+		double iPasses = Math.Round(e / d, 2); //calculates passes
+		Console.WriteLine("This will take " + iPasses + " I passes");
 		
 		//Starts printing program
 		Console.WriteLine("");
